@@ -43,6 +43,17 @@ func (UCINotation) String() string {
 func (UCINotation) Encode(pos *Position, m *Move) string {
 	return m.S1().String() + m.S2().String() + m.Promo().String()
 }
+func (UCINotation) NoCheckDecode(pos *Position, s string) (*Move, error) {
+	s = removeSubstrings(s, "?", "!", "+", "#", "e.p.")
+	for _, m := range pos.NoCheckValidMoves() {
+		str := UCINotation{}.Encode(pos, m)
+		str = removeSubstrings(str, "?", "!", "+", "#", "e.p.")
+		if str == s {
+			return m, nil
+		}
+	}
+	return nil, fmt.Errorf("chess: could not decode algebraic notation %s for position %s", s, pos.String())
+}
 
 // Decode implements the Decoder interface.
 func (UCINotation) Decode(pos *Position, s string) (*Move, error) {
@@ -157,6 +168,18 @@ type LongAlgebraicNotation struct{}
 // the notation's name.
 func (LongAlgebraicNotation) String() string {
 	return "Long Algebraic Notation"
+}
+
+func (LongAlgebraicNotation) NoCheckDecode(pos *Position, s string) (*Move, error) {
+	s = removeSubstrings(s, "?", "!", "+", "#", "e.p.")
+	for _, m := range pos.NoCheckValidMoves() {
+		str := LongAlgebraicNotation{}.Encode(pos, m)
+		str = removeSubstrings(str, "?", "!", "+", "#", "e.p.")
+		if str == s {
+			return m, nil
+		}
+	}
+	return nil, fmt.Errorf("chess: could not decode algebraic notation %s for position %s", s, pos.String())
 }
 
 // Encode implements the Encoder interface.
