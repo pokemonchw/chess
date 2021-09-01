@@ -191,6 +191,7 @@ func (g *Game) MoveStr(s string) error {
 	return g.Move(m)
 }
 
+// no in check module
 func (g *Game) NoCheckMoveStr(s string) error {
 	m, err := g.notation.NoCheckDecode(g.pos, s)
 	if err != nil {
