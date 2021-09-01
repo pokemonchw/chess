@@ -1,5 +1,8 @@
-module github.com/notnil/chess
+module github.com/pokemonchw/chess
 
-go 1.14
+go 1.16
 
-require github.com/ajstarks/svgo v0.0.0-20200320125537-f189e35d30ca
+require (
+	github.com/ajstarks/svgo v0.0.0-20210406150507-75cfd577ce75
+	github.com/notnil/chess v1.6.0
+)
