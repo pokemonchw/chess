@@ -168,6 +168,18 @@ func (g *Game) Move(m *Move) error {
 	return nil
 }
 
+func (g *Game) NoCheckMove(m *Move) error {
+	valid := moveSlice(g.NoCheckValidMoves()).find(m)
+	if valid == nil {
+		return fmt.Errorf("chess: invalid move %s", m)
+	}
+	g.moves = append(g.moves, valid)
+	g.pos = g.pos.Update(valid)
+	g.positions = append(g.positions, g.pos)
+	g.updatePosition()
+	return nil
+}
+
 // MoveStr decodes the given string in game's notation
 // and calls the Move function.  An error is returned if
 // the move can't be decoded or the move is invalid.
@@ -179,10 +191,22 @@ func (g *Game) MoveStr(s string) error {
 	return g.Move(m)
 }
 
+func (g *Game) NoCheckMoveStr(s string) error {
+	m, err := g.notation.NoCheckDecode(g.pos, s)
+	if err != nil {
+		return err
+	}
+	return g.NoCheckMove(m)
+}
+
 // ValidMoves returns a list of valid moves in the
 // current position.
 func (g *Game) ValidMoves() []*Move {
 	return g.pos.ValidMoves()
+}
+
+func (g Game) NoCheckValidMoves() []*Move {
+	return g.pos.NoCheckValidMoves()
 }
 
 // Positions returns the position history of the game.

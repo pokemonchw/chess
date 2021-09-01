@@ -105,6 +105,14 @@ func (pos *Position) ValidMoves() []*Move {
 	return append([]*Move(nil), pos.validMoves...)
 }
 
+func (pos *Position) NoCheckValidMoves() []*Move {
+	if pos.validMoves != nil {
+		return append([]*Move(nil), pos.validMoves...)
+	}
+	pos.validMoves = engine{}.NoCheckCalcMoves(pos, false)
+	return append([]*Move(nil), pos.validMoves...)
+}
+
 // Status returns the position's status as one of the outcome methods.
 // Possible returns values include Checkmate, Stalemate, and NoMethod.
 func (pos *Position) Status() Method {

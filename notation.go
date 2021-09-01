@@ -18,6 +18,7 @@ type Encoder interface {
 // is returned if the string could not be decoded.
 type Decoder interface {
 	Decode(pos *Position, s string) (*Move, error)
+	NoCheckDecode(pos *Position, s string) (*Move, error)
 }
 
 // Notation is the interface implemented by objects that can
@@ -125,6 +126,18 @@ func (AlgebraicNotation) Encode(pos *Position, m *Move) string {
 func (AlgebraicNotation) Decode(pos *Position, s string) (*Move, error) {
 	s = removeSubstrings(s, "?", "!", "+", "#", "e.p.")
 	for _, m := range pos.ValidMoves() {
+		str := AlgebraicNotation{}.Encode(pos, m)
+		str = removeSubstrings(str, "?", "!", "+", "#", "e.p.")
+		if str == s {
+			return m, nil
+		}
+	}
+	return nil, fmt.Errorf("chess: could not decode algebraic notation %s for position %s", s, pos.String())
+}
+
+func (AlgebraicNotation) NoCheckDecode(pos *Position, s string) (*Move, error) {
+	s = removeSubstrings(s, "?", "!", "+", "#", "e.p.")
+	for _, m := range pos.NoCheckValidMoves() {
 		str := AlgebraicNotation{}.Encode(pos, m)
 		str = removeSubstrings(str, "?", "!", "+", "#", "e.p.")
 		if str == s {
